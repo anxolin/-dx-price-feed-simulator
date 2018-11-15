@@ -1,32 +1,31 @@
-.App {
-  text-align: center;
+.actions .fas {
+  cursor: pointer;
+  margin: 0 0.3em;
+  font-size: 1.2em;
+  padding: 0.1em;
+  color: #9f42ff;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.actions .fa-equals {
+  background: #9f42ff;
   color: white;
+  border-radius: 15%;
+  font-size: 1.3em;
 }
 
-.App-link {
-  color: #61dafb;
+
+.controls label {
+  font-size: 1.3em;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.controls .actions {
+  text-align: left;
 }
+
+.controls .actions {
+  padding: 0.8em 0;
+}
+
+.price {
+  font-size: 4em;
+} 
