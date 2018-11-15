@@ -28,4 +28,12 @@
 
 .price {
   font-size: 4em;
-} 
+}
+
+.high-value {
+  background: #ffffa6;
+}
+
+.unused {
+  background-color: #efefef;
+}

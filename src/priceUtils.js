@@ -1,5 +1,5 @@
 const WEIGHED_VOLUME_CONSTANT = 10
-const WEIGHED_PRICE_CONSTANT = 10
+const WEIGHED_TIME_CONSTANT = 10000000
 
 function getPrice ({
   auctions,
@@ -12,7 +12,7 @@ function getPrice ({
     if (volume > highVolumeThreshold) {
       const weight = volume * (
         WEIGHED_VOLUME_CONSTANT * Math.pow(numAuctionToUse, 2) +
-        WEIGHED_PRICE_CONSTANT + Math.pow(numAuctionToUse - index, 2)
+        WEIGHED_TIME_CONSTANT + Math.pow(numAuctionToUse - index, 2)
       )
       // console.log('weight: ', weight)
       numerator += price * weight

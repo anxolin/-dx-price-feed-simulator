@@ -10,8 +10,8 @@ const REFERENCE_VALUES = {
   },
   volume: {
     low: 1300,
-    avg: 5000,
-    high: 30000
+    avg: 10000,
+    high: 50000
   }
 }
 const PERCENTAGE_RANDOMNES = 20
@@ -22,6 +22,8 @@ class PriceSimulator extends Component {
     numAuctionToUse: 10,
     highVolumeThreshold: 10000
   }
+
+  auctionsJsonRef = React.createRef()
 
   componentDidMount () {
     const auctions = []
@@ -100,9 +102,9 @@ class PriceSimulator extends Component {
       auctionIndex,
       volume,
       price
-    }) => {
+    }, index) => {
       return (
-        <tr key={ auctionIndex }>
+        <tr key={ auctionIndex } className={ (index > this.state.numAuctionToUse -1) ? 'unused' : '' }>
           <th scope="row">{ auctionIndex }</th>
           <td>
             <input
@@ -112,7 +114,7 @@ class PriceSimulator extends Component {
               onChange={ event => this.onChangePrice(auctionIndex, event.target.value) }
             />
           </td>
-          <td>
+          <td className={ (volume > this.state.highVolumeThreshold && index <= this.state.numAuctionToUse -1) ? 'high-value' : ''  }>
             <input
               type="number"
               className="form-control-plaintext"
@@ -129,6 +131,17 @@ class PriceSimulator extends Component {
             }></i>
             <i className="fas fa-arrow-circle-down" onClick={
               () => this.changeSingleAuction(auctionIndex, 'price', 'low')
+            }></i>
+          </td>
+          <td className="actions">
+            <i className="fas fa-arrow-circle-up" onClick={
+              () => this.changeSingleAuction(auctionIndex, 'volume', 'high')
+            }></i>
+            <i className="fas fa-equals" onClick={
+              () => this.changeSingleAuction(auctionIndex, 'volume', 'avg')
+            }></i>
+            <i className="fas fa-arrow-circle-down" onClick={
+              () => this.changeSingleAuction(auctionIndex, 'volume', 'low')
             }></i>
           </td>
         </tr>
@@ -197,13 +210,37 @@ class PriceSimulator extends Component {
             <th scope="col">Auction</th>
             <th scope="col">Price</th>
             <th scope="col">Volume</th>
-            <th scope="col"></th>
+            <th scope="col">Change price</th>
+            <th scope="col">Change volume</th>
           </tr>
         </thead>
         <tbody>
           { rows }          
         </tbody>
       </table>
+      <div className="form-group">
+        <label htmlFor="auctionsJson">Auctions</label>
+        <textarea
+          className="form-control"
+          id="auctionsJson"
+          rows="5" 
+          readOnly
+          value={ JSON.stringify(this.state.auctions) }          
+        />
+        <textarea
+          ref={this.auctionsJsonRef}
+          className="form-control"
+          id="auctionsJsonInput"
+          rows="5"
+        />
+      </div>
+      <button
+        onClick={ event => this.setState({ auctions: JSON.parse(this.auctionsJsonRef.current.value) }) }
+        type="button"
+        className="btn btn-primary">
+          Update auctions
+      </button>
+
      </form> 
     )
   }
