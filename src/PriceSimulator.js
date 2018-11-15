@@ -284,7 +284,7 @@ class PriceSimulator extends Component {
           }, this.saveState) }
           type="button"
           className="btn btn-primary">
-            Update auctions from JSON
+            Load auctions from JSON
         </button>
 
         <button

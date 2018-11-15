@@ -1,28 +1,33 @@
 const WEIGHED_VOLUME_CONSTANT = 100
-const WEIGHED_TIME_CONSTANT = 100
+const WEIGHED_TIME_CONSTANT = 2
 
 function getPrice ({
   auctions,
-  numAuctionToUse = 10,
+  numAuctionToUse = 2,
   highVolumeThreshold = 1000,
   volumeConstant = WEIGHED_VOLUME_CONSTANT,
   timeConstant = WEIGHED_TIME_CONSTANT
 }) {
+  console.log({ numAuctionToUse, highVolumeThreshold, volumeConstant, timeConstant })
+
   let numerator = 0
   let denominator = 0
-  auctions.forEach(({ auctionIndex, price, volume }, index) => {
+  const usedAuctions = auctions.slice(0, numAuctionToUse)
+
+  usedAuctions.forEach(({ auctionIndex, price, volume }, index) => {
     if (volume > highVolumeThreshold) {
       const weight = volume * (
-        volumeConstant * Math.pow(numAuctionToUse, 2) +
-        timeConstant + Math.pow(numAuctionToUse - index, 2)
+        Math.pow(volumeConstant, numAuctionToUse) +
+        // timeConstant * Math.pow(numAuctionToUse - index, 2)
+        timeConstant * Math.pow(timeConstant, numAuctionToUse - index)
       )
-      // console.log('weight: ', weight)
+      console.log('[%d] %d - weight: %s, price: %s', auctionIndex, numAuctionToUse - index, weight, price)
       numerator += price * weight
       denominator += weight
     }
   })
 
-  // console.log(numerator, denominator)
+  console.log(numerator, denominator)
 
   return {
     numerator,
