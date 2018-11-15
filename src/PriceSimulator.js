@@ -54,25 +54,29 @@ class PriceSimulator extends Component {
     })
   }
 
-  changeAll = (prop, type) => {
-    console.log('Change all')
+  changeAll = (propName, type) => {
     const auctions = this.state.auctions.map(auction => {
-      const randomValue = this.genetateRandomValue(prop, type)
+      const randomValue = this.genetateRandomValue(propName, type)
       // console.log(`[${auction.auctionIndex}] Set ${prop} to ${randomValue}`)
 
       return {
         ...auction,
-        [prop]: randomValue
+        [propName]: randomValue
       }
     })
 
     this.setState({ auctions })
   }
 
-  genetateRandomValue (prop, type) {
-    const referenceValues = REFERENCE_VALUES[prop]
+  changeSingleAuction = (auctionIndex, propName, type) => {
+    const randomValue = this.genetateRandomValue(propName, type)
+    this.onChangeFloatProp(auctionIndex, randomValue, propName)
+  }
+
+  genetateRandomValue (propName, type) {
+    const referenceValues = REFERENCE_VALUES[propName]
     if (!referenceValues) {
-      throw new Error('Unknown prop: ' + prop)
+      throw new Error('Unknown prop: ' + propName)
     }
 
     const referenceValue = referenceValues[type]
@@ -114,9 +118,15 @@ class PriceSimulator extends Component {
             />
           </td>
           <td className="actions">
-            <i className="fas fa-arrow-circle-up"></i>
-            <i className="fas fa-equals"></i>
-            <i className="fas fa-arrow-circle-down"></i>
+            <i className="fas fa-arrow-circle-up" onClick={
+              () => this.changeSingleAuction(auctionIndex, 'price', 'high')
+            }></i>
+            <i className="fas fa-equals" onClick={
+              () => this.changeSingleAuction(auctionIndex, 'price', 'avg')
+            }></i>
+            <i className="fas fa-arrow-circle-down" onClick={
+              () => this.changeSingleAuction(auctionIndex, 'price', 'low')
+            }></i>
           </td>
         </tr>
       )
