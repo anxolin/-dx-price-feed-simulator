@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import priceUtils from './priceUtils'
 const AUCTIONS = 15
 
 const REFERENCE_VALUES = {
@@ -134,7 +135,7 @@ class PriceSimulator extends Component {
     return (
      <form>
        <div className="price">
-        13.29
+        { priceUtils.getPrice(this.state.auctions) }
        </div>
        <div className="controls">
         <div className="form-group row">
