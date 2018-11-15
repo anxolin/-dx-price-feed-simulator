@@ -18,7 +18,9 @@ const PERCENTAGE_RANDOMNES = 20
 
 class PriceSimulator extends Component {
   state = {
-    auctions: []
+    auctions: [],
+    numAuctionToUse: 10,
+    highVolumeThreshold: 10000
   }
 
   componentDidMount () {
@@ -26,8 +28,8 @@ class PriceSimulator extends Component {
     for (let i =0; i < AUCTIONS; i++) {
       auctions.push({
         auctionIndex: 100 + AUCTIONS - i,
-        volume: 0,
-        price: 0
+        volume: this.genetateRandomValue('volume', 'avg'),
+        price: this.genetateRandomValue('price', 'avg')
       })
     }
 
@@ -88,7 +90,7 @@ class PriceSimulator extends Component {
     const lowerLimit = Math.ceil(referenceValue * (100 - PERCENTAGE_RANDOMNES) / 100)
     const upperLimit = Math.ceil(referenceValue * (100 + PERCENTAGE_RANDOMNES) / 100)
 
-    console.log(lowerLimit, upperLimit)
+    // console.log(lowerLimit, upperLimit)
 
     return Math.ceil(getRandomArbitrary(lowerLimit, upperLimit))
   }
@@ -135,7 +137,13 @@ class PriceSimulator extends Component {
     return (
      <form>
        <div className="price">
-        { priceUtils.getPrice(this.state.auctions) }
+        {
+          priceUtils.formatPrice(priceUtils.getPrice({
+            auctions: this.state.auctions,
+            numAuctionToUse: this.state.numAuctionToUse,
+            highVolumeThreshold: this.state.highVolumeThreshold
+          }))
+        }
        </div>
        <div className="controls">
         <div className="form-group row">
@@ -152,6 +160,34 @@ class PriceSimulator extends Component {
             <i className="fas fa-arrow-circle-up" onClick={ () => this.changeAll('volume', 'high') }></i>
             <i className="fas fa-equals" onClick={ () => this.changeAll('volume', 'avg') }></i>
             <i className="fas fa-arrow-circle-down" onClick={ () => this.changeAll('volume', 'low') }></i>
+          </div>
+        </div>
+        <div className="form-group row">
+          <label htmlFor="numAuctionToUse" className="col-sm-2 col-form-label">
+            Number of auctions to use
+          </label>
+          <div className="col-sm-10 actions">
+            <input 
+              type="number"
+              className="form-control-plaintext"
+              id="numAuctionToUse"
+              value={ this.state.numAuctionToUse }
+              onChange={ event => this.setState({ numAuctionToUse: parseInt(event.target.value) }) }
+            />
+          </div>
+        </div>
+        <div className="form-group row">
+          <label htmlFor="highVolumeThreshold" className="col-sm-2 col-form-label">
+            High volume threshold
+          </label>
+          <div className="col-sm-10 actions">
+            <input 
+              type="number"
+              className="form-control-plaintext"
+              id="highVolumeThreshold"
+              value={ this.state.highVolumeThreshold }
+              onChange={ event => this.setState({ highVolumeThreshold: parseInt(event.target.value) }) }
+            />
           </div>
         </div>
        </div>
