@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import priceUtils from './priceUtils'
 const AUCTIONS = 15
+const NUM_AUCTIONS_TO_USE_DEFAULT = 10
+const HIGH_VOLUME_THRESHOLD_DEFAULT = 5000
+const WEIGHED_VOLUME_CONSTANT = 100
+const WEIGHED_TIME_CONSTANT = 100
 
 const REFERENCE_VALUES = {
   price: {
@@ -19,23 +23,33 @@ const PERCENTAGE_RANDOMNES = 20
 class PriceSimulator extends Component {
   state = {
     auctions: [],
-    numAuctionToUse: 10,
-    highVolumeThreshold: 10000
+    numAuctionToUse: NUM_AUCTIONS_TO_USE_DEFAULT,
+    highVolumeThreshold: HIGH_VOLUME_THRESHOLD_DEFAULT,
+    volumeConstant: WEIGHED_VOLUME_CONSTANT,
+    timeConstant: WEIGHED_TIME_CONSTANT
   }
 
   auctionsJsonRef = React.createRef()
 
   componentDidMount () {
-    const auctions = []
-    for (let i =0; i < AUCTIONS; i++) {
-      auctions.push({
-        auctionIndex: 100 + AUCTIONS - i,
-        volume: this.genetateRandomValue('volume', 'avg'),
-        price: this.genetateRandomValue('price', 'avg')
-      })
+    let state = localStorage.getItem('state')
+    if (!state) {
+      const auctions = []
+      for (let i =0; i < AUCTIONS; i++) {
+        auctions.push({
+          auctionIndex: 100 + AUCTIONS - i,
+          volume: this.genetateRandomValue('volume', 'avg'),
+          price: this.genetateRandomValue('price', 'avg')
+        })
+      }
+      state = {
+        auctions
+      }
+    } else {
+      state = JSON.parse(state)
     }
 
-    this.setState({ auctions })
+    this.setState(state, this.saveState)
   }
 
   onChangePrice = (auctionIndex, newPrice) => {
@@ -44,6 +58,10 @@ class PriceSimulator extends Component {
 
   onChangeVolume = (auctionIndex, newPrice) => {
     this.onChangeFloatProp(auctionIndex, newPrice, 'volume')
+  }
+
+  saveState = () => {
+    localStorage.setItem('state', JSON.stringify(this.state))
   }
 
   onChangeFloatProp = (auctionIndex, value, propName) => {
@@ -148,38 +166,38 @@ class PriceSimulator extends Component {
       )
     })
     return (
-     <form>
+     <form className="price-simulator">
        <div className="price">
         {
           priceUtils.formatPrice(priceUtils.getPrice({
             auctions: this.state.auctions,
             numAuctionToUse: this.state.numAuctionToUse,
-            highVolumeThreshold: this.state.highVolumeThreshold
+            highVolumeThreshold: this.state.highVolumeThreshold,
+            volumeConstant: this.state.volumeConstant,
+            timeConstant: this.state.timeConstant
           }))
         }
        </div>
        <div className="controls">
         <div className="form-group row">
-          <label className="col-sm-2 col-form-label">Price</label>
-          <div className="col-sm-10 actions">
+          <label className="col-sm-3 col-form-label">Price</label>
+          <div className="col-sm-3 actions">
             <i className="fas fa-arrow-circle-up" onClick={ () => this.changeAll('price', 'high') }></i>
             <i className="fas fa-equals" onClick={ () => this.changeAll('price', 'avg') }></i>
             <i className="fas fa-arrow-circle-down" onClick={ () => this.changeAll('price', 'low') }></i>
           </div>
-        </div>
-        <div className="form-group row">
-          <label className="col-sm-2 col-form-label">Volume</label>
-          <div className="col-sm-10 actions">
+          <label className="col-sm-3 col-form-label">Volume</label>
+          <div className="col-sm-3 actions">
             <i className="fas fa-arrow-circle-up" onClick={ () => this.changeAll('volume', 'high') }></i>
             <i className="fas fa-equals" onClick={ () => this.changeAll('volume', 'avg') }></i>
             <i className="fas fa-arrow-circle-down" onClick={ () => this.changeAll('volume', 'low') }></i>
           </div>
         </div>
         <div className="form-group row">
-          <label htmlFor="numAuctionToUse" className="col-sm-2 col-form-label">
+        <label htmlFor="numAuctionToUse" className="col-sm-3 col-form-label">
             Number of auctions to use
           </label>
-          <div className="col-sm-10 actions">
+          <div className="col-sm-2 actions">
             <input 
               type="number"
               className="form-control-plaintext"
@@ -188,18 +206,43 @@ class PriceSimulator extends Component {
               onChange={ event => this.setState({ numAuctionToUse: parseInt(event.target.value) }) }
             />
           </div>
-        </div>
-        <div className="form-group row">
-          <label htmlFor="highVolumeThreshold" className="col-sm-2 col-form-label">
+
+          <label htmlFor="highVolumeThreshold" className="col-sm-3 col-form-label">
             High volume threshold
           </label>
-          <div className="col-sm-10 actions">
+          <div className="col-sm-2 actions">
             <input 
               type="number"
               className="form-control-plaintext"
               id="highVolumeThreshold"
               value={ this.state.highVolumeThreshold }
               onChange={ event => this.setState({ highVolumeThreshold: parseInt(event.target.value) }) }
+            />
+          </div>
+
+          <label htmlFor="volumeConstant" className="col-sm-3 col-form-label">
+            Volume constant
+          </label>
+          <div className="col-sm-2 actions">
+            <input 
+              type="number"
+              className="form-control-plaintext"
+              id="volumeConstant"
+              value={ this.state.volumeConstant }
+              onChange={ event => this.setState({ volumeConstant: parseInt(event.target.value) }) }
+            />
+          </div>
+
+          <label htmlFor="timeConstant" className="col-sm-3 col-form-label">
+            Time constant
+          </label>
+          <div className="col-sm-2 actions">
+            <input 
+              type="number"
+              className="form-control-plaintext"
+              id="timeConstant"
+              value={ this.state.timeConstant }
+              onChange={ event => this.setState({ timeConstant: parseInt(event.target.value) }) }
             />
           </div>
         </div>
@@ -234,13 +277,23 @@ class PriceSimulator extends Component {
           rows="5"
         />
       </div>
-      <button
-        onClick={ event => this.setState({ auctions: JSON.parse(this.auctionsJsonRef.current.value) }) }
-        type="button"
-        className="btn btn-primary">
-          Update auctions
-      </button>
+      <div className="buttons">
+        <button
+          onClick={ () => this.setState({
+            auctions: JSON.parse(this.auctionsJsonRef.current.value)
+          }, this.saveState) }
+          type="button"
+          className="btn btn-primary">
+            Update auctions from JSON
+        </button>
 
+        <button
+          onClick={ this.saveState }
+          type="button"
+          className="btn btn-primary">
+            Save state
+        </button>
+      </div>
      </form> 
     )
   }
