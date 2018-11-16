@@ -18,7 +18,6 @@ function getPrice ({
     if (volume > highVolumeThreshold) {
       const weight = volume * (
         Math.pow(volumeConstant, numAuctionToUse) +
-        // timeConstant * Math.pow(numAuctionToUse - index, 2)
         timeConstant * Math.pow(timeConstant, numAuctionToUse - index)
       )
       console.log('[%d] %d - weight: %s, price: %s', auctionIndex, numAuctionToUse - index, weight, price)
