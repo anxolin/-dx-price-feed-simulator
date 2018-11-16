@@ -20,6 +20,7 @@
 
 .controls label {
   font-size: 1.3em;
+  text-align: right;
 }
 
 .controls .actions {
@@ -43,5 +44,13 @@
 }
 
 .buttons button{
-  margin: 0 1em;
+  margin: 1em 1em;
+}
+
+.card {
+  margin: 0.5em 0;
+}
+
+.card h5 {
+  cursor: pointer;
 }

@@ -26,7 +26,11 @@ class PriceSimulator extends Component {
     numAuctionToUse: NUM_AUCTIONS_TO_USE_DEFAULT,
     highVolumeThreshold: HIGH_VOLUME_THRESHOLD_DEFAULT,
     volumeConstant: WEIGHED_VOLUME_CONSTANT,
-    timeConstant: WEIGHED_TIME_CONSTANT
+    timeConstant: WEIGHED_TIME_CONSTANT,
+    visiblePriceFeed: false,
+    visibleCheckReliability: false,
+    visibleUpdateAll: false,
+    visibleLoadAuctions: false
   }
 
   auctionsJsonRef = React.createRef()
@@ -179,74 +183,159 @@ class PriceSimulator extends Component {
         }
        </div>
        <div className="controls">
-        <div className="form-group row">
-          <label className="col-sm-3 col-form-label">Price</label>
-          <div className="col-sm-3 actions">
-            <i className="fas fa-arrow-circle-up" onClick={ () => this.changeAll('price', 'high') }></i>
-            <i className="fas fa-equals" onClick={ () => this.changeAll('price', 'avg') }></i>
-            <i className="fas fa-arrow-circle-down" onClick={ () => this.changeAll('price', 'low') }></i>
-          </div>
-          <label className="col-sm-3 col-form-label">Volume</label>
-          <div className="col-sm-3 actions">
-            <i className="fas fa-arrow-circle-up" onClick={ () => this.changeAll('volume', 'high') }></i>
-            <i className="fas fa-equals" onClick={ () => this.changeAll('volume', 'avg') }></i>
-            <i className="fas fa-arrow-circle-down" onClick={ () => this.changeAll('volume', 'low') }></i>
+        <div className="card">
+          <h5 
+            className="card-header"
+            onClick={ () => this.setState({ visiblePriceFeed: !this.state.visiblePriceFeed }) }>
+            Price Feed
+          </h5>
+          <div className="card-body" style={{ display: (this.state.visiblePriceFeed ? 'block' : 'none') }}>
+            <div className="form-group row">
+              <label className="col-sm-3 col-form-label">Price feed:</label>
+              <div className="col-sm-9 actions">
+                <select className="form-control" id="priceFeed">
+                  <option>Weighed value and time, discard low volume auctions</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-group row">
+            <label htmlFor="numAuctionToUse" className="col-sm-3 col-form-label">
+              Number of auctions to use:
+            </label>
+            <div className="col-sm-2 actions">
+              <input 
+                type="number"
+                className="form-control-plaintext"
+                id="numAuctionToUse"
+                value={ this.state.numAuctionToUse }
+                onChange={ event => this.setState({ numAuctionToUse: parseInt(event.target.value) }) }
+              />
+            </div>
+
+            <label htmlFor="highVolumeThreshold" className="col-sm-3 col-form-label">
+              High volume threshold:
+            </label>
+            <div className="col-sm-2 actions">
+              <input 
+                type="number"
+                className="form-control-plaintext"
+                id="highVolumeThreshold"
+                value={ this.state.highVolumeThreshold }
+                onChange={ event => this.setState({ highVolumeThreshold: parseInt(event.target.value) }) }
+              />
+            </div>
+
+            <label htmlFor="volumeConstant" className="col-sm-3 col-form-label">
+              Volume constant:
+            </label>
+            <div className="col-sm-2 actions">
+              <input 
+                type="number"
+                className="form-control-plaintext"
+                id="volumeConstant"
+                value={ this.state.volumeConstant }
+                onChange={ event => this.setState({ volumeConstant: parseInt(event.target.value) }) }
+              />
+            </div>
+            <label htmlFor="timeConstant" className="col-sm-3 col-form-label">
+              Time constant:
+            </label>
+            <div className="col-sm-2 actions">
+              <input 
+                type="number"
+                className="form-control-plaintext"
+                id="timeConstant"
+                value={ this.state.timeConstant }
+                onChange={ event => this.setState({ timeConstant: parseInt(event.target.value) }) }
+              />
+            </div>
+            </div>
           </div>
         </div>
-        <div className="form-group row">
-        <label htmlFor="numAuctionToUse" className="col-sm-3 col-form-label">
-            Number of auctions to use
-          </label>
-          <div className="col-sm-2 actions">
-            <input 
-              type="number"
-              className="form-control-plaintext"
-              id="numAuctionToUse"
-              value={ this.state.numAuctionToUse }
-              onChange={ event => this.setState({ numAuctionToUse: parseInt(event.target.value) }) }
-            />
-          </div>
 
-          <label htmlFor="highVolumeThreshold" className="col-sm-3 col-form-label">
-            High volume threshold
-          </label>
-          <div className="col-sm-2 actions">
-            <input 
-              type="number"
-              className="form-control-plaintext"
-              id="highVolumeThreshold"
-              value={ this.state.highVolumeThreshold }
-              onChange={ event => this.setState({ highVolumeThreshold: parseInt(event.target.value) }) }
-            />
-          </div>
-
-          <label htmlFor="volumeConstant" className="col-sm-3 col-form-label">
-            Volume constant
-          </label>
-          <div className="col-sm-2 actions">
-            <input 
-              type="number"
-              className="form-control-plaintext"
-              id="volumeConstant"
-              value={ this.state.volumeConstant }
-              onChange={ event => this.setState({ volumeConstant: parseInt(event.target.value) }) }
-            />
-          </div>
-
-          <label htmlFor="timeConstant" className="col-sm-3 col-form-label">
-            Time constant
-          </label>
-          <div className="col-sm-2 actions">
-            <input 
-              type="number"
-              className="form-control-plaintext"
-              id="timeConstant"
-              value={ this.state.timeConstant }
-              onChange={ event => this.setState({ timeConstant: parseInt(event.target.value) }) }
-            />
+        <div className="card">
+          <h5
+            className="card-header"
+            onClick={ () => this.setState({ visibleCheckReliability: !this.state.visibleCheckReliability }) }>
+            Check reliability
+          </h5>
+          <div className="card-body" style={{ display: this.state.visibleCheckReliability ? 'block' : 'none' }}>
+            <p>
+              TODO: Check if the price is trusted
+            </p>
           </div>
         </div>
+
+        <div className="card">
+          <h5
+            className="card-header"
+            onClick={ () => this.setState({ visibleUpdateAll: !this.state.visibleUpdateAll }) }>
+            Update the price and volume</h5>
+          <div className="card-body" style={{ display: this.state.visibleUpdateAll ? 'block' : 'none' }}>
+            <p>Set random high/average/low values for:</p>
+            <div className="form-group row">
+              <label className="col-sm-3 col-form-label">Price:</label>
+              <div className="col-sm-3 actions">
+                <i className="fas fa-arrow-circle-up" onClick={ () => this.changeAll('price', 'high') }></i>
+                <i className="fas fa-equals" onClick={ () => this.changeAll('price', 'avg') }></i>
+                <i className="fas fa-arrow-circle-down" onClick={ () => this.changeAll('price', 'low') }></i>
+              </div>
+              <label className="col-sm-3 col-form-label">Volume:</label>
+              <div className="col-sm-3 actions">
+                <i className="fas fa-arrow-circle-up" onClick={ () => this.changeAll('volume', 'high') }></i>
+                <i className="fas fa-equals" onClick={ () => this.changeAll('volume', 'avg') }></i>
+                <i className="fas fa-arrow-circle-down" onClick={ () => this.changeAll('volume', 'low') }></i>
+              </div>       
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <h5
+            className="card-header"
+            onClick={ () => this.setState({ visibleLoadAuctions: !this.state.visibleLoadAuctions }) }>
+            Load auctions</h5>
+          <div className="card-body" style={{ display: this.state.visibleLoadAuctions ? 'block' : 'none' }}>
+            <p>Load auctions from JSON:</p>
+
+            <div className="form-group">
+              <label htmlFor="auctionsJson">Auctions</label>
+              <textarea
+                className="form-control"
+                id="auctionsJson"
+                rows="5" 
+                readOnly
+                value={ JSON.stringify(this.state.auctions) }          
+              />
+              <textarea
+                ref={this.auctionsJsonRef}
+                className="form-control"
+                id="auctionsJsonInput"
+                rows="5"
+              />
+            </div>
+            <div className="buttons">
+              <button
+                onClick={ () => this.setState({
+                  auctions: JSON.parse(this.auctionsJsonRef.current.value)
+                }, this.saveState) }
+                type="button"
+                className="btn btn-primary">
+                  Load auctions
+              </button>
+            </div>
+          </div>
+        </div>
+
        </div>
+      <div className="buttons">
+        <button
+          onClick={ this.saveState }
+          type="button"
+          className="btn btn-primary">
+            Save state
+        </button>
+      </div>
        <table className="table">
         <thead className="thead-dark">
           <tr>
@@ -260,40 +349,7 @@ class PriceSimulator extends Component {
         <tbody>
           { rows }          
         </tbody>
-      </table>
-      <div className="form-group">
-        <label htmlFor="auctionsJson">Auctions</label>
-        <textarea
-          className="form-control"
-          id="auctionsJson"
-          rows="5" 
-          readOnly
-          value={ JSON.stringify(this.state.auctions) }          
-        />
-        <textarea
-          ref={this.auctionsJsonRef}
-          className="form-control"
-          id="auctionsJsonInput"
-          rows="5"
-        />
-      </div>
-      <div className="buttons">
-        <button
-          onClick={ () => this.setState({
-            auctions: JSON.parse(this.auctionsJsonRef.current.value)
-          }, this.saveState) }
-          type="button"
-          className="btn btn-primary">
-            Load auctions from JSON
-        </button>
-
-        <button
-          onClick={ this.saveState }
-          type="button"
-          className="btn btn-primary">
-            Save state
-        </button>
-      </div>
+      </table>      
      </form> 
     )
   }
