@@ -28,6 +28,10 @@ function isReliablePrice ({
   return isReliable
 }
 
+function isReliablePriceMock () {
+  return true
+}
+
 function getPrice ({
   auctions,
   numAuctionToUse = 2,
@@ -73,8 +77,22 @@ function formatPrice ({
   }
 }
 
+function getPriceMock () {
+  return {
+    numerator: 1340,
+    denominator: 5
+  }
+}
+
 export default {
+  // Price functions
   getPrice,
-  formatPrice,
-  isReliablePrice
+  getPriceMock,
+
+  // Is reliable price functions
+  isReliablePrice,
+  isReliablePriceMock,
+
+  // Formatter
+  formatPrice
 }

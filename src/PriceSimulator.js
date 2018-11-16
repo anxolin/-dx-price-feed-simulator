@@ -27,12 +27,16 @@ class PriceSimulator extends Component {
     numAuctionToUse: NUM_AUCTIONS_TO_USE_DEFAULT,
     highVolumeThreshold: HIGH_VOLUME_THRESHOLD_DEFAULT,
     volumeConstant: WEIGHED_VOLUME_CONSTANT,
-    timeConstant: WEIGHED_TIME_CONSTANT,
+    timeConstant: WEIGHED_TIME_CONSTANT,    
     minNumOfHighVolumeAuctions: MIN_NUM_OF_HIGH_VOLUME_AUCTIONS,
+    // Visibility
     visiblePriceFeed: false,
     visibleCheckReliability: false,
     visibleUpdateAll: false,
-    visibleLoadAuctions: false
+    visibleLoadAuctions: false,
+    // Function selectors
+    priceFeedFn: 'getPrice',
+    isReliableFn: 'isReliablePrice'
   }
 
   auctionsJsonRef = React.createRef()
@@ -184,14 +188,14 @@ class PriceSimulator extends Component {
     return (
      <form className="price-simulator">
        <div className="price">
-        <i className={ 'fas ' + (priceUtils.isReliablePrice({
+        <i className={ 'fas ' + (priceUtils[this.state.isReliableFn]({
             auctions: this.state.auctions,
             numAuctionToUse: this.state.numAuctionToUse,
             highVolumeThreshold: this.state.highVolumeThreshold,  
             minNumOfHighVolumeAuctions: this.state.minNumOfHighVolumeAuctions   
         }) ? 'fa-check-circle' : 'fa-times-circle') }></i>
         {
-          priceUtils.formatPrice(priceUtils.getPrice({
+          priceUtils.formatPrice(priceUtils[this.state.priceFeedFn]({
             auctions: this.state.auctions,
             numAuctionToUse: this.state.numAuctionToUse,
             highVolumeThreshold: this.state.highVolumeThreshold,
@@ -211,8 +215,12 @@ class PriceSimulator extends Component {
             <div className="form-group row">
               <label className="col-sm-3 col-form-label">Price feed:</label>
               <div className="col-sm-9 actions">
-                <select className="form-control" id="priceFeed">
-                  <option>Weighed value and time, discard low volume auctions</option>
+                <select
+                  value={ this.state.priceFeedFn }
+                  className="form-control" id="priceFeed"
+                  onChange={ event => this.setState({ priceFeedFn: event.target.value }) }>
+                  <option value="getPrice">Weighed value and time, discard low volume auctions</option>
+                  <option value="getPriceMock">Get price mock</option>
                 </select>
               </div>
             </div>
@@ -281,8 +289,12 @@ class PriceSimulator extends Component {
             <div className="form-group row">
               <label className="col-sm-3 col-form-label">Price Reliability check:</label>
               <div className="col-sm-9 actions">
-                <select className="form-control" id="priceFeed">
-                  <option>Weighed value and time, discard low volume auctions</option>
+                <select
+                  value={ this.state.isReliableFn }
+                  className="form-control" id="priceFeed"
+                  onChange={ event => this.setState({ isReliableFn: event.target.value }) }>
+                  <option value="isReliablePrice">At list some high volume auctions</option>
+                  <option value="isReliablePriceMock">Is reliable Mock function</option>
                 </select>
               </div>
             </div>
