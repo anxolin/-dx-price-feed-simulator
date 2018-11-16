@@ -1,11 +1,6 @@
 const WEIGHED_VOLUME_CONSTANT = 100
 const WEIGHED_TIME_CONSTANT = 2
 
-// ALSO, the other problem to solve is. How to decide if we trust a price. I was thinking in using:
-// - At least M high volume auctions in last N auctions
-// - typical deviation small for N auctions
-// - The “Trusted price” differ less than XX% from the last price
-
 function isReliablePrice ({
   auctions,
   numAuctionToUse = 2,
@@ -27,6 +22,8 @@ function isReliablePrice ({
 
   return isReliable
 }
+
+// The average of the squared differences from the Mean
 
 function isReliablePriceMock () {
   return true

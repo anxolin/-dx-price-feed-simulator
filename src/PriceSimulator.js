@@ -219,8 +219,10 @@ class PriceSimulator extends Component {
                   value={ this.state.priceFeedFn }
                   className="form-control" id="priceFeed"
                   onChange={ event => this.setState({ priceFeedFn: event.target.value }) }>
-                  <option value="getPrice">Weighed value and time, discard low volume auctions</option>
-                  <option value="getPriceMock">Get price mock</option>
+                  <option value="getPrice">Weighed by price and time, discard low volume</option>
+                  <option value="getPriceMock">[todo] Simple median of the prices, discard low volume</option>
+                  <option value="getPriceMock">[todo] Weighed by price, discard price outliners, discard low volume</option>
+                  <option value="getPriceMock">[todo] Simple median of the prices, discard price outliners, discard low volume</option>
                 </select>
               </div>
             </div>
@@ -294,7 +296,8 @@ class PriceSimulator extends Component {
                   className="form-control" id="priceFeed"
                   onChange={ event => this.setState({ isReliableFn: event.target.value }) }>
                   <option value="isReliablePrice">At list some high volume auctions</option>
-                  <option value="isReliablePriceMock">Is reliable Mock function</option>
+                  <option value="isReliablePriceMock">[todo] The “Trusted price” differ a small percentage</option>
+                  <option value="isReliablePriceMock">[todo] Typical deviation is small</option>
                 </select>
               </div>
             </div>
