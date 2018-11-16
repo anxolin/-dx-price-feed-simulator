@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import priceUtils from './priceUtils'
 const AUCTIONS = 15
-const NUM_AUCTIONS_TO_USE_DEFAULT = 10
+const NUM_AUCTIONS_TO_USE_DEFAULT = 2
+const MIN_NUM_OF_HIGH_VOLUME_AUCTIONS = 1
 const HIGH_VOLUME_THRESHOLD_DEFAULT = 5000
 const WEIGHED_VOLUME_CONSTANT = 100
 const WEIGHED_TIME_CONSTANT = 100
@@ -27,6 +28,7 @@ class PriceSimulator extends Component {
     highVolumeThreshold: HIGH_VOLUME_THRESHOLD_DEFAULT,
     volumeConstant: WEIGHED_VOLUME_CONSTANT,
     timeConstant: WEIGHED_TIME_CONSTANT,
+    minNumOfHighVolumeAuctions: MIN_NUM_OF_HIGH_VOLUME_AUCTIONS,
     visiblePriceFeed: false,
     visibleCheckReliability: false,
     visibleUpdateAll: false,
@@ -182,10 +184,11 @@ class PriceSimulator extends Component {
     return (
      <form className="price-simulator">
        <div className="price">
-        <i class={ 'fas ' + (priceUtils.isReliablePrice({
+        <i className={ 'fas ' + (priceUtils.isReliablePrice({
             auctions: this.state.auctions,
             numAuctionToUse: this.state.numAuctionToUse,
-            highVolumeThreshold: this.state.highVolumeThreshold     
+            highVolumeThreshold: this.state.highVolumeThreshold,  
+            minNumOfHighVolumeAuctions: this.state.minNumOfHighVolumeAuctions   
         }) ? 'fa-check-circle' : 'fa-times-circle') }></i>
         {
           priceUtils.formatPrice(priceUtils.getPrice({
@@ -274,10 +277,55 @@ class PriceSimulator extends Component {
             onClick={ () => this.setState({ visibleCheckReliability: !this.state.visibleCheckReliability }) }>
             Check reliability
           </h5>
-          <div className="card-body" style={{ display: this.state.visibleCheckReliability ? 'block' : 'none' }}>
-            <p>
-              TODO: Check if the price is trusted
-            </p>
+          <div className="card-body" style={{ display: (this.state.visibleCheckReliability ? 'block' : 'none') }}>
+            <div className="form-group row">
+              <label className="col-sm-3 col-form-label">Price Reliability check:</label>
+              <div className="col-sm-9 actions">
+                <select className="form-control" id="priceFeed">
+                  <option>Weighed value and time, discard low volume auctions</option>
+                </select>
+              </div>
+            </div>
+            <div className="form-group row">
+            <label htmlFor="numAuctionToUse" className="col-sm-3 col-form-label">
+              Number of auctions to use:
+            </label>
+            <div className="col-sm-2 actions">
+              <input 
+                type="number"
+                className="form-control-plaintext"
+                id="numAuctionToUse"
+                value={ this.state.numAuctionToUse }
+                onChange={ event => this.setState({ numAuctionToUse: parseInt(event.target.value) }) }
+              />
+            </div>
+
+            <label htmlFor="highVolumeThreshold" className="col-sm-3 col-form-label">
+              High volume threshold:
+            </label>
+            <div className="col-sm-2 actions">
+              <input 
+                type="number"
+                className="form-control-plaintext"
+                id="highVolumeThreshold"
+                value={ this.state.highVolumeThreshold }
+                onChange={ event => this.setState({ highVolumeThreshold: parseInt(event.target.value) }) }
+              />
+            </div>
+
+            <label htmlFor="minNumOfHighVolumeAuctions" className="col-sm-3 col-form-label">
+              Number of high volume auctions:
+            </label>
+            <div className="col-sm-2 actions">
+              <input 
+                type="number"
+                className="form-control-plaintext"
+                id="minNumOfHighVolumeAuctions"
+                value={ this.state.minNumOfHighVolumeAuctions }
+                onChange={ event => this.setState({ minNumOfHighVolumeAuctions: parseInt(event.target.value) }) }
+              />
+            </div>
+            </div>
           </div>
         </div>
 
