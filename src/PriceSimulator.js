@@ -70,7 +70,17 @@ class PriceSimulator extends Component {
 
   onChangeFloatProp = (auctionIndex, value, propName) => {
     this.setState(prevState => {
-      const auctions = prevState.auctions
+      const auctions = prevState.auctions.map(auction => {
+        if (auction.auctionIndex === auctionIndex) {
+          return {
+            ...auction,
+            [propName]: value
+          }
+        } else {
+          return auction
+        }
+
+      })
       const auction = auctions.find(auction => auction.auctionIndex === auctionIndex)
       auction[propName] = parseFloat(value)
       
@@ -172,6 +182,11 @@ class PriceSimulator extends Component {
     return (
      <form className="price-simulator">
        <div className="price">
+        <i class={ 'fas ' + (priceUtils.isReliablePrice({
+            auctions: this.state.auctions,
+            numAuctionToUse: this.state.numAuctionToUse,
+            highVolumeThreshold: this.state.highVolumeThreshold     
+        }) ? 'fa-check-circle' : 'fa-times-circle') }></i>
         {
           priceUtils.formatPrice(priceUtils.getPrice({
             auctions: this.state.auctions,

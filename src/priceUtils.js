@@ -1,6 +1,14 @@
 const WEIGHED_VOLUME_CONSTANT = 100
 const WEIGHED_TIME_CONSTANT = 2
 
+function isReliablePrice ({
+  auctions,
+  numAuctionToUse = 2,
+  highVolumeThreshold = 1000
+}) {
+  return true
+}
+
 function getPrice ({
   auctions,
   numAuctionToUse = 2,
@@ -48,5 +56,6 @@ function formatPrice ({
 
 export default {
   getPrice,
-  formatPrice
+  formatPrice,
+  isReliablePrice
 }
